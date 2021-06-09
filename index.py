@@ -4,8 +4,10 @@ import smtplib
 from email.mime.text import MIMEText
 from email.utils import formataddr
 import re
+from config import my_pass,my_sender,my_user
 
-# #爬取一张好看的图片，此功能未完成
+
+# #获取图片
 # def get_img_url(keyword):
 #     url = 'http://image.baidu.com/search/flip?tn=baiduimage&ie=utf-8&word=' + keyword + '&ct=201326592&v=flip'
 #     result = requests.get(url)
@@ -14,13 +16,13 @@ import re
 
 
 
-#爬取金句
+#获取金句
 def get_iciba_everyday():
 	url = 'http://open.iciba.com/dsapi/'
 	r = requests.get(url)
 	return json.loads(r.text)
 
-#爬取毒鸡汤
+#获取毒鸡汤
 def get_djt():
     #获取毒鸡汤文案
     url ='https://soul-soup.fe.workers.dev/'
@@ -31,8 +33,7 @@ def get_djt():
 
 
 #发邮件
-def mail(my_sender,my_user,subject,msg_text):
-    my_pass = ''  # 请填写开启smtp后产生的密码
+def mail(my_pass,my_sender,my_user,subject,msg_text):
     ret = 1
     try:
         msg = MIMEText(msg_text, 'html', 'utf-8')
@@ -63,18 +64,12 @@ def main_handler(event,context):
     # img_url = get_img_url(zh)
 
 
-    my_sender = '1942956063@qq.com'  # 发件人邮箱账号
 
-    #在这里添加收件人信息，key是昵称，value是邮箱号码
-    my_user = {'小明':'ilikehhh@163.com',
-               }
-
-    subject = '每日金句分享' #主题
-
+    subject = '每日金句分享'
+   
     #发送邮件
     ret = []
     for name,mail_num in my_user.items():
-
         common_msg = f"""
         <body style="margin: 0; padding: 0;" background="https://images.pexels.com/photos/907485/pexels-photo-907485.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940">
             <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse;"> 　
@@ -99,7 +94,7 @@ def main_handler(event,context):
 
         """
         tmp = 0
-        tmp = mail(my_sender,mail_num,subject,common_msg)
+        tmp = mail(my_pass,my_sender,mail_num,subject,common_msg)
         ret.append(tmp)
 
     if any(ret):
